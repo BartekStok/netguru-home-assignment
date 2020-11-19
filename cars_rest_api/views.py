@@ -1,9 +1,10 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
-from .models import Car, Rating
-from .serializers import CarSerializer, RatingSerializer
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import Car
+from .serializers import CarSerializer, RatingSerializer
 from .services import get_cars, get_model_name
 
 
@@ -114,15 +115,8 @@ class PopularView(APIView):
     """
     def get(self, request):
         """Shows most popular car"""
-        cars = Car.objects.all().annotate(rate_count=Count('rating')).order_by('-rate_count')
+        cars = (Car.objects.all()
+                .annotate(rate_count=Count('rating'))
+                .order_by('-rate_count'))
         serializer = CarSerializer(cars, many=True)
         return Response(serializer.data, status=200)
-
-
-import json
-class Tests(APIView):
-
-    def get(self, request, car_make):
-        with open('cars_rest_api/honda.json') as f:
-            data = json.load(f)
-            return Response(data, status=200)

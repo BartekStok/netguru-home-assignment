@@ -1,7 +1,7 @@
 import requests
 
-API_URL = f'https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/'
-# API_URL = f'http://localhost:8000/api/tests/'
+API_URL = 'https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/'
+# API_URL = 'http://localhost:8000/api/tests/'
 
 
 def get_cars(car_make):
@@ -20,10 +20,3 @@ def get_model_name(make_models, model_name):
             if make['Model_Name'] == model_name:
                 return make['Model_Name']
     return False
-
-import json
-if __name__ == '__main__':
-    with open('honda.json') as f:
-        data = json.load(f)
-        res = get_model_name(data, ['Civic'])
-        print(res)
