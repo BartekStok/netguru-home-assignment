@@ -1,0 +1,41 @@
+*.pyc
+*.pyo
+env/
+tags
+.idea
+# dotenv
+.env
+
+# virtualenv
+.venv
+venv/
+ENV/
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media
+secret_key.txt
