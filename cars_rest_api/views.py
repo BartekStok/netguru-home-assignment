@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Car
-from .serializers import CarSerializer
+from django.db.models import Count
+from .models import Car, Rating
+from .serializers import CarSerializer, RatingSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .services import get_cars, get_model_name
@@ -22,7 +23,7 @@ class CarView(APIView):
     def post(self, request):
         """
         Post Method validates requested data trough serializer,
-        if valid calls method from services to fetch requested data
+        if valid calls method from services.py to fetch requested data
         from external API https://vpic.nhtsa.dot.gov/api/.
         Then processes data, if valid saves to DB, if no returns
         response with proper message
@@ -45,7 +46,7 @@ class CarView(APIView):
             response = {'Message': 'Model does not exists'}
             return Response(response, status=404)
 
-        car_make = serializer.data['car_make']
+        car_make = make_models['Results'][0]['Make_Name']
 
         # Checks for existence in local DB, if no saves it to DB
         try:
@@ -68,9 +69,10 @@ class RatingView(APIView):
     :methods: POST
     """
     def post(self, request):
-        """Updates rating for specific car"""
+        """Adds rating for specific car"""
         serializer = CarSerializer(data=request.data)
 
+        # Validate data
         if not serializer.is_valid():
             response = {'Message': 'Please provide car_make and model_name'}
             return Response(response, status=422)
@@ -78,6 +80,7 @@ class RatingView(APIView):
         car_make = serializer.data['car_make']
         model_name = serializer.data['model_name']
 
+        # Check if car exists in DB
         try:
             car = (Car.objects
                    .filter(car_make=car_make)
@@ -86,17 +89,34 @@ class RatingView(APIView):
             response = {'Message': 'Car does not exists in DB'}
             return Response(response, status=404)
 
-        if not hasattr(request, 'rating'):
+        # Check if rating is in request
+        if 'rating' not in request.data:
             response = {'Message': 'Please provide rating for a car'}
             return Response(response, status=422)
 
+        # Validate and save rating to DB
+        data = {'rating': request.data['rating'], 'car': car.id}
+        rating_serializer = RatingSerializer(data=data)
+        if rating_serializer.is_valid():
+            rating_serializer.save()
+            response = {'Message': 'Rating added'}
+            return Response(response, status=201)
 
+        # Returns error when rating not correct
+        response = {'Message': 'Rating must be 1 to 5'}
+        return Response(response, status=422)
 
 
 class PopularView(APIView):
-
+    """
+    Class shows popular cars, based on rating count :model: Car
+    :methods: GET
+    """
     def get(self, request):
-        pass
+        """Shows most popular car"""
+        cars = Car.objects.all().annotate(rate_count=Count('rating')).order_by('-rate_count')
+        serializer = CarSerializer(cars, many=True)
+        return Response(serializer.data, status=200)
 
 
 import json

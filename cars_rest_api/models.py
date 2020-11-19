@@ -17,6 +17,9 @@ class Car(models.Model):
     car_make = models.CharField(max_length=255)
     model_name = models.CharField(max_length=255)
 
+    def get_rate_count(self):
+        return self.rating_set.all().count()
+
 
 class Rating(models.Model):
     """
