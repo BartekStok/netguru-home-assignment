@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/cars/', views.CarView.as_view()),
     path('api/rate/', views.RatingView.as_view()),
     path('api/popular/', views.PopularView.as_view()),
+    path('api/tests/<str:car_make>', views.Tests.as_view())
 ]

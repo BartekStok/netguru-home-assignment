@@ -1,6 +1,7 @@
 import requests
 
-API_URL = f'https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/'
+# API_URL = f'https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/'
+API_URL = f'http://localhost:8000/api/tests/'
 
 
 def get_cars(car_make):
