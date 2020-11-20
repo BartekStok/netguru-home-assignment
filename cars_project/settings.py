@@ -20,7 +20,10 @@ env = environ.Env(
     # set casting, default value
     # DEBUG=(bool, False)
 )
-environ.Env.read_env('./.env')
+try:
+    environ.Env.read_env('./.env')
+except FileNotFoundError:
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -140,9 +143,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'cars_rest_api/static'),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'cars_rest_api/static'),)
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
