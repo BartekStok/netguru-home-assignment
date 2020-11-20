@@ -51,6 +51,19 @@ $ pytest
 ```
 
 
+### API - instruction to endpoints
+
+| Method    | URI                      | Params  | 
+|-----------|--------------------------|---------|
+| GET       | api/cars                 | -       | 
+| POST      | api/cars                 | car_make, model_name  |
+| POST      | api/rate                 |  car_make, model_name, rating (1-5) |
+| GET       | api/popular              | -       | 
+- When sending POST on api/cars, car_make could be partial and is case insensitive,
+model_name must match exactly, starting with big letter.
+- When sending POST to api/rate -> car_make and model_name must be exactly the
+same as in local Database (upper or lower case sensitive).
+
 ## License
 
 This project is licensed under the MIT License 
