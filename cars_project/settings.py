@@ -17,7 +17,6 @@ import environ
 
 # Read environment variables
 env = environ.Env(
-    # set casting, default value
     # DEBUG=(bool, False)
 )
 # try:

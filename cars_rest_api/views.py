@@ -125,6 +125,6 @@ class PopularView(APIView):
 
 
 class WelcomeView(View):
-
+    """Shows welcome view"""
     def get(self, request):
         return render(request, 'welcome.html')
