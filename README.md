@@ -24,10 +24,20 @@ It is best to use the python `virtualenv` tool to build locally:
 
 ```sh
 $ mkdir app && cd app
-$ virtualenv -p python3 venv
 $ git clone git@github.com:BartekStok/netguru-home-assignment.git
+$ cd netguru-home-assignment
+$ virtualenv -p python3 venv
 $ source venv/bin/activate
 $ pip3 install -r requirements.txt
+$ create database in postgresql
+$ rename .env.example to .env 
+$ generate secret key using 
+    python3 manage.py shell
+    from django.core.management.utils import get_random_secret_key
+    get_random_secret_key()
+$ copy generated key and paste it to .env
+$ fill all missing data regarding database
+$ python3 manage.py migrate
 $ python manage.py runserver
 ```
 
@@ -40,6 +50,7 @@ In root directory
 $ docker-compose build
 $ docker-compose up
 $ docker-compose exec web python manage.py collectstatic
+$ restart docker-compose
 ```
 
 
