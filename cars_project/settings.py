@@ -19,10 +19,10 @@ import environ
 env = environ.Env(
     # DEBUG=(bool, False)
 )
-# try:
-#     environ.Env.read_env('./.env')
-# except FileNotFoundError:
-#     pass
+try:
+    environ.Env.read_env('./.env')
+except FileNotFoundError:
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

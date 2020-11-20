@@ -5,6 +5,7 @@ tags
 .idea
 # dotenv
 .env
+staticfiles
 
 # virtualenv
 .venv
