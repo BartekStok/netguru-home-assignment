@@ -13,6 +13,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import django_on_heroku
 import os
+import environ
+
+# Read environment variables
+env = environ.Env(
+    # set casting, default value
+    # DEBUG=(bool, False)
+)
+environ.Env.read_env('./.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,14 +32,14 @@ try:
     with open('cars_project/secret_key.txt') as f:
         SECRET_KEY = f.read().strip()
 except FileNotFoundError:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = env('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get("DEBUG", default=0))
+DEBUG = int(env("DEBUG", default=0))
 
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(" ")
 
 # Application definition
 
@@ -80,17 +88,14 @@ WSGI_APPLICATION = 'cars_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# try:
-#     from cars_project.local_settings import DATABASES
-# except ModuleNotFoundError:
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+        "ENGINE": env("SQL_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": env("SQL_DATABASE", default=os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": env("SQL_USER", default="user"),
+        "PASSWORD": env("SQL_PASSWORD", default="password"),
+        "HOST": env("SQL_HOST", default="localhost"),
+        "PORT": env("SQL_PORT", default="5432"),
     }
 }
 
