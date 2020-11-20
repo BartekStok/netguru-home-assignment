@@ -66,7 +66,7 @@ class CarView(APIView):
 
 class RatingView(APIView):
     """
-    Class adds rating for model :model: Car
+    Class adds rating for model :model: Rating
     :methods: POST
     """
     def post(self, request):
