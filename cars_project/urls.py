@@ -20,6 +20,7 @@ from cars_rest_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.WelcomeView.as_view(), name='welcome'),
     path('api/cars/', views.CarView.as_view(), name='cars'),
     path('api/rate/', views.RatingView.as_view(), name='rate'),
     path('api/popular/', views.PopularView.as_view(), name='popular'),

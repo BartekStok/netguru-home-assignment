@@ -1,5 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
+from django.shortcuts import render
+from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -120,3 +122,9 @@ class PopularView(APIView):
                 .order_by('-rate_count'))
         serializer = CarSerializer(cars, many=True)
         return Response(serializer.data, status=200)
+
+
+class WelcomeView(View):
+
+    def get(self, request):
+        return render(request, 'welcome.html')
