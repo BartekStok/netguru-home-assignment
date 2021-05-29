@@ -14,6 +14,7 @@ class Car(models.Model):
     """
     Stores a single car entry
     """
+
     car_make = models.CharField(max_length=255)
     model_name = models.CharField(max_length=255)
 
@@ -25,5 +26,6 @@ class Rating(models.Model):
     """
     Stores rating for a car, foreign key to :Car:
     """
+
     rating = models.IntegerField(choices=RATING)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)

@@ -1,0 +1,18 @@
+version: '2.1'
+services:
+  localstack:
+    container_name: "localstack_ng_home_assignment"
+    image: localstack/localstack:0.11.1
+    ports:
+      - "4567-4599:4567-4599"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - SERVICES=iam,s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - PORT_WEB_UI=8080
+      - LAMBDA_EXECUTOR=local
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"

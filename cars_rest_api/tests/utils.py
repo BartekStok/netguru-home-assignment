@@ -8,6 +8,6 @@ def get_cars_list():
     https://vpic.nhtsa.dot.gov/api/
     """
     cwd = os.path.dirname(__file__)
-    with open(cwd + '/data/honda.json', 'r') as f:
+    with open(cwd + "/data/honda.json", "r") as f:
         data = json.load(f)
-        return data['Results'][:10]
+        return data["Results"][:10]
