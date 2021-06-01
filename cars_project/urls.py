@@ -24,5 +24,5 @@ urlpatterns = [
     path("api/cars/", views.CarView.as_view(), name="cars"),
     path("api/rate/", views.RatingView.as_view(), name="rate"),
     path("api/popular/", views.PopularView.as_view(), name="popular"),
-    path("test", views.S3BucketView.as_view(), name="s3-bucket"),
+    path("s3", views.S3BucketView.as_view(), name="s3-bucket"),
 ]

@@ -1,10 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>S3 bucket</title>
+  <meta charset="UTF-8">
+  <title>S3 bucket</title>
 </head>
 <body>
+<form action="#" method="post">
+  {% csrf_token %}
+  {{ create_bucket_form.bucket_name.label }}
+  {{ create_bucket_form.bucket_name }}
+  {{ create_bucket_form.errors }}
+  <input type="submit" name="{{ create_bucket_form.prefix }}" value="Create">
+</form>
+<hr>
+<table>
+  <tr>
+    <th>Nr</th>
+    <th>Name</th>
+  </tr>
+  {% for bucket in buckets %}
+    <tr>
+      <td>#</td>
+      <td>{{ bucket }}</td>
+    </tr>
+  {% endfor %}
+</table>
+<hr>
+<form action="#" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ save_to_bucket_form }}
+  <input type="submit" name="{{ save_to_bucket_form.prefix }}" value="Save">
+</form>
+<hr>
+{% for bucket, content in buckets_content.items %}
+  <table class="table">
+    <tr>
+      <th>Bucket</th>
+      <th>File</th>
+    </tr>
+    <tr>
+      <td>{{ bucket }}</td>
+      <td>
+        {% for obj in content %}
+          {{ obj }} <br>
+        {% endfor %}
+      </td>
+    </tr>
+  </table>
+{% endfor %}
 
 </body>
 </html>

@@ -1,12 +1,20 @@
+from collections import defaultdict
+
+from botocore.exceptions import ClientError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
-from django.shortcuts import render
+from django.forms import Form
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.views import View
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import typing as t
 
+from .forms import CreateBucketForm, SaveToBucketForm
 from .models import Car
-from .s3 import s3_client
+from .s3 import S3
 from .serializers import CarSerializer, RatingSerializer
 from .services import get_cars, get_model_name
 
@@ -128,8 +136,63 @@ class WelcomeView(View):
 class S3BucketView(View):
     """Test view for s3"""
 
+    s3_client = S3.s3_client
+    s3_resource = S3.s3_resource
+
+    @staticmethod
+    def _get_form(request: t.Type[Request], form_class: t.Type[Form], prefix: str):
+        data = request.POST if prefix in request.POST else None
+        files = request.FILES
+        return form_class(data=data, files=files, prefix=prefix)
+
     def get(self, request):
-        # print(dir(s3_client))
-        print(dir(s3_client))
-        # s3_client.create_bucket(bucket="test3")
-        return render(request, "s3-test.html")
+        create_bucket_form = CreateBucketForm(prefix="create_bucket_form")
+        save_to_bucket_form = SaveToBucketForm(prefix="save_to_bucket_form")
+        buckets = S3.get_buckets_name()
+
+        buckets_content: t.Dict[str, list] = defaultdict(list)
+        for bucket in buckets:
+            for obj in self.s3_resource.Bucket(name=bucket).objects.all():
+                buckets_content[bucket].append(obj.key)
+        buckets_content.default_factory = None
+
+        context = {
+            "create_bucket_form": create_bucket_form,
+            "save_to_bucket_form": save_to_bucket_form,
+            "buckets": buckets,
+            "buckets_content": buckets_content,
+        }
+        return render(request, "s3-test.html", context)
+
+    def post(self, request):
+        create_bucket_form = self._get_form(request, CreateBucketForm, "create_bucket_form")
+        save_to_bucket_form = self._get_form(request, SaveToBucketForm, "save_to_bucket_form")
+        buckets = S3.get_buckets_name()
+
+        if create_bucket_form.is_bound and create_bucket_form.is_valid():
+            bucket_prefix = create_bucket_form.cleaned_data.get("bucket_name")
+            bucket_name, response = S3.create_bucket(bucket_prefix=bucket_prefix, s3_connection=self.s3_client)
+            return HttpResponse(f"{bucket_name} ----- {response}")
+        elif save_to_bucket_form.is_bound and save_to_bucket_form.is_valid():
+            bucket_name = save_to_bucket_form.cleaned_data.get("bucket_name")
+            file = save_to_bucket_form.cleaned_data.get("file")
+
+            buckets = S3.get_buckets_name()
+            if bucket_name not in buckets:
+                return HttpResponse("Given bucket does not exists!")
+
+            bucket = self.s3_resource.Bucket(name=bucket_name)
+            try:
+                bucket.upload_fileobj(file.file, file.name)
+            except ClientError as e:
+                print(e)
+                return False
+
+            return HttpResponse(f"{bucket_name} ----- {file}")
+
+        context = {
+            "create_bucket_form": create_bucket_form,
+            "save_to_bucket_form": save_to_bucket_form,
+            "buckets": buckets,
+        }
+        return render(request, "s3-test.html", context)
